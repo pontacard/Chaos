@@ -64,6 +64,7 @@ class Lyapunov():           #このメソッドはPhysRevB.100.224422を参考�
             #print(n_omega)
             d_theta = n_omega * np.linalg.norm(dt)
             ptheta = np.array(self.theta) + d_theta
+            #print(ptheta)
             perturb_spin[k] = Sin_SOT(self.alpha, self.gamma, self.B, self.S0, self.t, self.t_eval, self.Amp, self.omega ,ptheta, self.Kx, self.Ky, self.Kz, self.beta, self.spin_start, self.spin_stop)
             perturb_spin[k].history()
             spin_log = perturb_spin[k].S.T
@@ -84,7 +85,7 @@ class Lyapunov():           #このメソッドはPhysRevB.100.224422を参考�
         step_width = (self.t[1] - self.t[0]) / len(self.t_eval)
 
 
-        Lyapnov_exponent = sum_log_ly / (self.lya_cycle) - np.log(a)
+        Lyapnov_exponent = sum_log_ly / (self.lya_cycle) + np.log(a)
 
         print("here",Lyapnov_exponent)
 
@@ -100,15 +101,15 @@ class Lyapunov():           #このメソッドはPhysRevB.100.224422を参考�
         S1 = np.array(S1)
         print(S0,S1)
         #print(np.dot(S0,S1))
-        Sdot = 0
-        if np.dot(S0,S1) >=1 :
-            Sdot = 1
-        else:
-            Sdot = np.dot(S0,S1)
+
+        Sdot = np.dot(S0,S1)
+        Sdot = np.around(Sdot,12)
         l_cos_dis = np.arccos(Sdot)
-        print(l_cos_dis,np.linalg.norm(self.omega) * np.linalg.norm(del_t))
+        #print(l_cos_dis)
         #print( (np.linalg.norm(self.omega) * np.linalg.norm(self.delta_t1))**2)
-        dist = np.sqrt(l_cos_dis**2 + (np.linalg.norm(self.omega) * np.linalg.norm(del_t))**2)
+        print(del_t)
+        print(l_cos_dis, (np.linalg.norm(del_t)/2))
+        dist = np.sqrt(l_cos_dis**2 + del_t[0]**2)
         return dist
 
 
@@ -120,7 +121,7 @@ if __name__ == '__main__':
 
     plotB = [[0, 0, -1.2], [0, 0, 2.4]]
 
-    gamma = 1.7
+    gamma = 0.17
     mu_h_div_2e = [0.824, -21]
     sta_M = [1.4, 0]  # 飽和磁化(T)で入れる
     theta = [-2, -1]
@@ -131,5 +132,6 @@ if __name__ == '__main__':
     Hs = Hsn * (10 ** Hso) * 1000 / gamma  # 最後の1000はmTにするため
     print(Hs)
 
-    Lyap = Lyapunov(0.005, 0.17, [0,0,200],S0,t,t_eval,[0,0,60000],[0,0,0.3],[0,0,0],0 ,0 , 2000, 0, 0, 200, 100,20,[0,0.1,0])
+    Lyap = Lyapunov(0.01, gamma, [0, 0, -4], S0, t, t_eval, [0, 0, 60],[0,0,6.8],[0,0,0], 0, 0, 12, 0, 0, 5, 100, 10, [0,0,0.01])
     Lyap.make_trajec()
+
