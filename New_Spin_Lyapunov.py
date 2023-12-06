@@ -114,9 +114,22 @@ class Lyapunov():           #このメソッドはPhysRevB.100.224422を参考�
         #print(l_cos_dis)
         #print( (np.linalg.norm(self.omega) * np.linalg.norm(self.delta_t1))**2)
         #print(del_t)
-        print(l_cos_dis**2 , del_t**2)
-        dist = np.sqrt(l_cross_dis + del_t**2)
+        #print(l_cos_dis**2 , del_t**2)
+        dist = np.sqrt(l_cos_dis**2 + del_t**2)
         return dist
+
+    def l(self,S0,S1):
+        S0 = np.array(S0)
+        S1 = np.array(S1)
+        #print(S0, S1)
+        # print(np.dot(S0,S1))
+
+        Sdot = np.dot(S0, S1)
+        Sdot = np.around(Sdot, 12)
+        l_cos_dis = np.arccos(Sdot)
+        print("a",l_cos_dis)
+        return l_cos_dis
+
 
 
 if __name__ == '__main__':
